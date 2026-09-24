@@ -67,8 +67,8 @@ src/
 - Branch name: `feature/TASK-{nn}-{short-description}`, where `{nn}` is the task number in `docs/tasks.md` (`BO-01` → `feature/TASK-01-repo-hygiene`). Description in English, lowercase kebab-case, 2–5 words.
 - One branch per task, scoped to that task only. Anything out of scope becomes a new task in `docs/tasks.md`.
 - Commits: Conventional Commits with the task ID as scope, e.g. `chore(BO-01): add editorconfig`.
-- Pull request to `develop` titled `BO-01: <task title>`, with CI green and the owner's review. **Squash merge**; delete the branch after merging.
-- Releases: `release/{version}` (SemVer, e.g. `release/0.1.0`) cut from `develop` ad hoc and merged into `master`.
+- Pull request to `develop` titled `BO-01: <task title>`, with CI green and the owner's review. Features are **squash-merged**; delete the branch after merging.
+- Releases: `release/{version}` (SemVer, e.g. `release/0.1.0`) cut from `develop` ad hoc and merged into `master` with a **merge commit**, never squashed, so `master` and `develop` keep a shared history.
 
 ## Conventions
 
