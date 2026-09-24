@@ -18,7 +18,7 @@ pnpm install
 pnpm dev                       # Vite dev server on http://localhost:5174
 pnpm build                     # tsc -b && vite build
 pnpm typecheck                 # tsc -b --noEmit (required before closing a task)
-pnpm test                      # Vitest + React Testing Library
+pnpm test                      # Vitest + React Testing Library + MSW (test:watch, test:coverage)
 pnpm lint                      # oxlint: type-aware TS rules, React hooks, a11y, layer boundaries
 pnpm format                    # oxfmt, Prettier-compatible (code only; Markdown is not auto-formatted)
 pnpm dlx shadcn@latest add <component>
