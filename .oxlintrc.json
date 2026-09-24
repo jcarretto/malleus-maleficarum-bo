@@ -62,7 +62,13 @@
     "jsx-a11y/interactive-supports-focus": "error",
     "jsx-a11y/role-has-required-aria-props": "error",
     "jsx-a11y/aria-props": "error",
-    "jsx-a11y/aria-role": "error"
+    "jsx-a11y/aria-role": "error",
+    "import/no-unassigned-import": [
+      "error",
+      {
+        "allow": ["**/*.css"]
+      }
+    ]
   },
   "overrides": [
     {
@@ -271,6 +277,12 @@
       "plugins": ["vitest"],
       "env": {
         "vitest": true
+      }
+    },
+    {
+      "files": ["src/components/ui/**/*.tsx"],
+      "rules": {
+        "react/only-export-components": "off"
       }
     }
   ]
