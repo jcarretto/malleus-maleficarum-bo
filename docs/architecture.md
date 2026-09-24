@@ -125,4 +125,7 @@ To prevent the operating system from purging the match when the screen locks or 
 | Languages | Player PWA: Spanish (default), English, Portuguese. Back office: Spanish only. The API returns error codes; clients translate them. |
 | Target platforms | Android and iOS (installed PWA). Both must be tested on real devices. |
 | Back office stack | Vite + React + TypeScript + shadcn/ui + TanStack Query/Router/Table. Online only, not a PWA. |
+| Git workflow | Work branches `feature/TASK-{nn}-{short-description}` start from `develop` and are squash-merged through pull requests. `release/{version}` branches are cut from `develop` ad hoc and merged into `master` with a merge commit. |
+| Go toolchain | Module minimum is Go 1.26 (required by `validator/v10` and current `golang.org/x` modules). Local development and CI use the latest stable Go (1.27 as of 2026-09). |
+| Frontend lint and format | oxlint (type-aware rules through `oxlint-tsgolint`) and oxfmt (Prettier-compatible) instead of ESLint and Prettier. They cover typed TypeScript rules, React hooks and React Compiler rules, jsx-a11y and layer boundaries, with no plugin peer conflicts and sub-second runs. |
 | Pending | Hosting and domain. Google OAuth Client ID (provided later). |

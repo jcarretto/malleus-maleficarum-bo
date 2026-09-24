@@ -9,11 +9,12 @@ Decisions: `docs/architecture.md` § 5.
 | ID | Task | Depends on | Done when |
 |-|-|-|-|
 | BO-01 | `.gitattributes` (`* text=auto eol=lf`), `.gitignore`, `.editorconfig`, complete `.env.example` | — | No CRLF warnings; `.env` ignored |
-| BO-02 | Vite `react-ts` with pnpm, strict `tsconfig`, `@/` alias, ESLint + Prettier | BO-01 | `pnpm dev`, `build`, `typecheck`, `lint` pass |
+| BO-02 | Vite `react-ts` with pnpm, strict `tsconfig`, `@/` alias, oxlint + oxfmt | BO-01 | `pnpm dev`, `build`, `typecheck`, `lint` pass |
 | BO-03 | Tailwind + `shadcn init` + Lucide | BO-02 | A shadcn `Button` renders |
 | BO-04 | Vitest + React Testing Library + MSW | BO-02 | Sample test passes |
 | BO-05 | App shell: TanStack Router, root `ErrorBoundary`, `QueryClientProvider`, sidebar layout | BO-03 | Thrown error shows fallback |
 | BO-06 | Design direction: `/impeccable init`, `frontend-design` tokens (dense, desktop-first admin UI) | BO-03 | Tokens applied; no literal colors |
+| BO-07 | Docs: release merge policy, Go toolchain and frontend tooling decisions | — | CLAUDE.md, decision log and tasks updated |
 
 ## Phase 1 — Admin access
 
