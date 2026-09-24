@@ -15,11 +15,12 @@ Spec and decisions: `docs/architecture.md`. Work plan: `docs/tasks.md`.
 
 ```bash
 pnpm install
-pnpm dev
-pnpm build
-pnpm typecheck                 # tsc --noEmit (required before closing a task)
+pnpm dev                       # Vite dev server on http://localhost:5174
+pnpm build                     # tsc -b && vite build
+pnpm typecheck                 # tsc -b --noEmit (required before closing a task)
 pnpm test                      # Vitest + React Testing Library
-pnpm lint
+pnpm lint                      # oxlint: type-aware TS rules, React hooks, a11y, layer boundaries
+pnpm format                    # oxfmt, Prettier-compatible (code only; Markdown is not auto-formatted)
 pnpm dlx shadcn@latest add <component>
 ```
 

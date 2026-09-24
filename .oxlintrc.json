@@ -1,0 +1,277 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "react", "jsx-a11y", "import", "unicorn", "oxc"],
+  "categories": {
+    "correctness": "error",
+    "suspicious": "error",
+    "perf": "error"
+  },
+  "options": {
+    "typeAware": true
+  },
+  "env": {
+    "browser": true,
+    "builtin": true
+  },
+  "ignorePatterns": ["dist", "dev-dist", "coverage"],
+  "rules": {
+    "no-restricted-imports": [
+      "error",
+      {
+        "patterns": [
+          {
+            "group": ["../**"],
+            "message": "Use the @/ alias instead of parent-relative imports."
+          }
+        ]
+      }
+    ],
+    "react/rules-of-hooks": "error",
+    "react/exhaustive-deps": "error",
+    "react/only-export-components": [
+      "error",
+      {
+        "allowConstantExport": true
+      }
+    ],
+    "react/react-in-jsx-scope": "off",
+    "typescript/consistent-type-imports": "error",
+    "typescript/no-explicit-any": "error",
+    "typescript/no-non-null-assertion": "error",
+    "typescript/await-thenable": "error",
+    "typescript/no-floating-promises": "error",
+    "typescript/no-misused-promises": "error",
+    "typescript/no-unsafe-argument": "error",
+    "typescript/no-unsafe-assignment": "error",
+    "typescript/no-unsafe-call": "error",
+    "typescript/no-unsafe-member-access": "error",
+    "typescript/no-unsafe-return": "error",
+    "typescript/no-unnecessary-condition": "error",
+    "typescript/no-unnecessary-type-assertion": "error",
+    "typescript/only-throw-error": "error",
+    "typescript/prefer-promise-reject-errors": "error",
+    "typescript/restrict-template-expressions": "error",
+    "typescript/switch-exhaustiveness-check": "error",
+    "jsx-a11y/alt-text": "error",
+    "jsx-a11y/anchor-is-valid": "error",
+    "jsx-a11y/click-events-have-key-events": "error",
+    "jsx-a11y/no-static-element-interactions": "error",
+    "jsx-a11y/label-has-associated-control": "error",
+    "jsx-a11y/no-autofocus": "error",
+    "jsx-a11y/control-has-associated-label": "error",
+    "jsx-a11y/interactive-supports-focus": "error",
+    "jsx-a11y/role-has-required-aria-props": "error",
+    "jsx-a11y/aria-props": "error",
+    "jsx-a11y/aria-role": "error"
+  },
+  "overrides": [
+    {
+      "files": ["src/lib/**/*.{ts,tsx}"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["../**"],
+                "message": "Use the @/ alias instead of parent-relative imports."
+              },
+              {
+                "group": [
+                  "@/app",
+                  "@/routes",
+                  "@/features",
+                  "@/components",
+                  "@/services",
+                  "@/stores",
+                  "@/copy",
+                  "@/test",
+                  "@/app/**",
+                  "@/routes/**",
+                  "@/features/**",
+                  "@/components/**",
+                  "@/services/**",
+                  "@/stores/**",
+                  "@/copy/**",
+                  "@/test/**"
+                ],
+                "message": "src/lib must not depend on this layer (see 'Structure' in CLAUDE.md)."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["src/copy/**/*.{ts,tsx}"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["../**"],
+                "message": "Use the @/ alias instead of parent-relative imports."
+              },
+              {
+                "group": [
+                  "@/app",
+                  "@/routes",
+                  "@/features",
+                  "@/components",
+                  "@/services",
+                  "@/stores",
+                  "@/lib",
+                  "@/test",
+                  "@/app/**",
+                  "@/routes/**",
+                  "@/features/**",
+                  "@/components/**",
+                  "@/services/**",
+                  "@/stores/**",
+                  "@/lib/**",
+                  "@/test/**"
+                ],
+                "message": "src/copy must not depend on this layer (see 'Structure' in CLAUDE.md)."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["src/services/**/*.{ts,tsx}"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["../**"],
+                "message": "Use the @/ alias instead of parent-relative imports."
+              },
+              {
+                "group": [
+                  "@/app",
+                  "@/routes",
+                  "@/features",
+                  "@/components",
+                  "@/stores",
+                  "@/app/**",
+                  "@/routes/**",
+                  "@/features/**",
+                  "@/components/**",
+                  "@/stores/**"
+                ],
+                "message": "src/services must not depend on this layer (see 'Structure' in CLAUDE.md)."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["src/stores/**/*.{ts,tsx}"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["../**"],
+                "message": "Use the @/ alias instead of parent-relative imports."
+              },
+              {
+                "group": [
+                  "@/app",
+                  "@/routes",
+                  "@/features",
+                  "@/components",
+                  "@/app/**",
+                  "@/routes/**",
+                  "@/features/**",
+                  "@/components/**"
+                ],
+                "message": "src/stores must not depend on this layer (see 'Structure' in CLAUDE.md)."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["src/components/**/*.{ts,tsx}"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["../**"],
+                "message": "Use the @/ alias instead of parent-relative imports."
+              },
+              {
+                "group": [
+                  "@/app",
+                  "@/routes",
+                  "@/features",
+                  "@/app/**",
+                  "@/routes/**",
+                  "@/features/**"
+                ],
+                "message": "src/components must not depend on this layer (see 'Structure' in CLAUDE.md)."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["src/features/**/*.{ts,tsx}"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["../**"],
+                "message": "Use the @/ alias instead of parent-relative imports."
+              },
+              {
+                "group": ["@/app", "@/routes", "@/app/**", "@/routes/**"],
+                "message": "src/features must not depend on this layer (see 'Structure' in CLAUDE.md)."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["src/routes/**/*.{ts,tsx}"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["../**"],
+                "message": "Use the @/ alias instead of parent-relative imports."
+              },
+              {
+                "group": ["@/app", "@/app/**"],
+                "message": "src/routes must not depend on this layer (see 'Structure' in CLAUDE.md)."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["src/**/*.test.{ts,tsx}", "src/test/**/*.{ts,tsx}"],
+      "plugins": ["vitest"],
+      "env": {
+        "vitest": true
+      }
+    }
+  ]
+}
