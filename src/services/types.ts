@@ -24,8 +24,3 @@ export interface LoginInput {
   email: string
   password: string
 }
-
-/** `locale` is omitted: the API only uses it when it creates an account. */
-export interface GoogleSignInInput {
-  idToken: string
-}

@@ -287,23 +287,6 @@ describe('error mapping', () => {
 })
 
 describe('authApi', () => {
-  it('stores the access token after Google sign-in', async () => {
-    let body: unknown
-    server.use(
-      http.post(api('/v1/auth/google'), async ({ request }) => {
-        body = await request.json()
-        return HttpResponse.json(session('tok-google'), { status: 201 })
-      }),
-    )
-
-    await expect(authApi.googleSignIn({ idToken: 'id-token' })).resolves.toEqual(
-      session('tok-google'),
-    )
-
-    expect(body).toEqual({ idToken: 'id-token' })
-    expect(getAccessToken()).toBe('tok-google')
-  })
-
   it('stores the access token after sign-in and drops it on logout even if the request fails', async () => {
     server.use(
       http.post(api('/v1/auth/login'), () => HttpResponse.json(session('tok-login'))),
