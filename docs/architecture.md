@@ -113,9 +113,9 @@ To prevent the operating system from purging the match when the screen locks or 
 |-|-|
 | Repositories | `malleus-maleficarum-pwa` (player app), `malleus-maleficarum-api` (Go API), `malleus-maleficarum-bo` (admin back office). Branches: `master` (default) and `develop` (work). |
 | Database access | `pgx/v5` with explicit SQL. No ORM. Migrations with golang-migrate. |
-| Authentication | Email + password (bcrypt) or Google Sign-In (Google Identity Services ID token verified by the API). Password recovery by email is required. |
+| Authentication | Email + password (bcrypt) or Google Sign-In (Google Identity Services ID token verified by the API). Password recovery by email is required. Applies to players; the back office uses its own sign-in (see Admin sign-in). |
 | Account linking | A Google sign-in with an email already registered with a password links automatically (Google verifies the email). A Google-only account that requests a password reset receives an email saying the account uses Google. |
-| Session | Access JWT (15 min) kept in memory. Opaque refresh token in an `httpOnly; Secure; SameSite=Lax` cookie, rotated on every use, reuse detection, sliding 60-day lifetime. PWA, BO, and API must share the same registrable domain. |
+| Session | Access JWT (15 min) kept in memory. Opaque refresh token in an `httpOnly; Secure; SameSite=Lax` cookie, rotated on every use, reuse detection, sliding 60-day lifetime. A refresh token presented again within 30 s of its rotation (concurrent tabs) gets a new token in the same family instead of revoking it. PWA, BO, and API must share the same registrable domain. |
 | Offline play | Every user can play offline. An account is optional and only required for Premium. |
 | Anonymous telemetry | Each install gets a server-registered `installation_id` with a signed installation token. Matches are grouped by installation and linked to a user when the user signs in on that install. |
 | Premium | Lifetime. Obtained by purchase (Mercado Pago, one-time payment) or by redeeming a single-use code shipped with the physical edition. Activation requires connectivity. |
@@ -128,4 +128,5 @@ To prevent the operating system from purging the match when the screen locks or 
 | Git workflow | Work branches `feature/TASK-{nn}-{short-description}` start from `develop` and are squash-merged through pull requests. `release/{version}` branches are cut from `develop` ad hoc and merged into `master` with a merge commit. |
 | Go toolchain | Module minimum is Go 1.26 (required by `validator/v10` and current `golang.org/x` modules). Local development and CI use the latest stable Go (1.27 as of 2026-09). |
 | Frontend lint and format | oxlint (type-aware rules through `oxlint-tsgolint`) and oxfmt (Prettier-compatible) instead of ESLint and Prettier. They cover typed TypeScript rules, React hooks and React Compiler rules, jsx-a11y and layer boundaries, with no plugin peer conflicts and sub-second runs. |
+| Admin sign-in | The back office has its own sign-in, separate from players: `/v1/admin/auth/*` with email + password + a TOTP code (RFC 6238, authenticator app). No Google and no self sign-up: admin accounts and their TOTP secrets are created only by the owners with `cmd/admin`. Admin sessions use their own refresh cookie (`__Host-admin_refresh_token`), so player and admin sessions in the same browser are independent, and `RequireAdmin` accepts only access tokens issued by the admin sign-in. |
 | Pending | Hosting and domain. Google OAuth Client ID (provided later). |

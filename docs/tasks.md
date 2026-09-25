@@ -15,14 +15,15 @@ Decisions: `docs/architecture.md` § 5.
 | BO-05 | App shell: TanStack Router, root `ErrorBoundary`, `QueryClientProvider`, sidebar layout | BO-03 | Thrown error shows fallback |
 | BO-06 | Design direction: `/impeccable init`, `frontend-design` tokens (dense, desktop-first admin UI) | BO-03 | Tokens applied; no literal colors |
 | BO-07 | Docs: release merge policy, Go toolchain and frontend tooling decisions | — | CLAUDE.md, decision log and tasks updated |
+| BO-08 | Docs: admin sign-in decision; BO-11 and BO-12 updated | — | Decision log and tasks updated |
 
 ## Phase 1 — Admin access
 
 | ID | Task | Depends on | Done when |
 |-|-|-|-|
 | BO-10 | HTTP client: `credentials: 'include'`, access token in memory, single refresh retry on 401, API error codes → Spanish messages | BO-05 | MSW tests |
-| BO-11 | Sign-in (email + password and Google), guarded routes, rejects non-admin users | BO-10, API-29, API-31 | Non-admin sees "sin permisos" |
-| BO-12 | Sign-out | BO-11 | Cookie cleared; refresh revoked |
+| BO-11 | Sign-in with email + password + TOTP code against `/v1/admin/auth/*` (no Google), session restore, guarded routes | BO-10, API-47, API-48 | Wrong credentials, wrong code and non-admin accounts show the same error; reload keeps the session |
+| BO-12 | Sign-out (`/v1/admin/auth/logout`) | BO-11 | Admin cookie cleared; refresh revoked; the player app session is unaffected |
 
 ## Phase 2 — Activation codes
 
