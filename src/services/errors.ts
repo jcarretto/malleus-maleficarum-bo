@@ -58,17 +58,31 @@ export class ApiError extends Error {
   /** Raw code as sent by the API. */
   readonly code: string
   readonly fields: readonly FieldError[]
+  /** Seconds to wait before retrying, from the `Retry-After` header of a 429. */
+  readonly retryAfterSeconds?: number
 
-  constructor(status: number, code: string, fields: readonly FieldError[] = []) {
+  constructor(
+    status: number,
+    code: string,
+    fields: readonly FieldError[] = [],
+    retryAfterSeconds?: number,
+  ) {
     super(`API error ${String(status)}: ${code}`)
     this.name = 'ApiError'
     this.status = status
     this.code = code
     this.fields = fields
+    if (retryAfterSeconds !== undefined) this.retryAfterSeconds = retryAfterSeconds
   }
 
-  /** Spanish message for the user; unknown codes fall back to the generic server error. */
+  /**
+   * Spanish message for the user; unknown codes fall back to the generic server error.
+   * A throttled request says how long to wait when the API told us.
+   */
   get userMessage(): string {
+    if (this.code === 'rate_limited' && this.retryAfterSeconds !== undefined) {
+      return copy.rateLimit.retryIn(this.retryAfterSeconds)
+    }
     return apiErrorMessages[isApiErrorCode(this.code) ? this.code : 'internal_error']
   }
 
@@ -101,6 +115,13 @@ function isFieldError(v: unknown): v is FieldError {
   )
 }
 
+/** Parses `Retry-After` in delta-seconds; the HTTP-date form is not used by the API. */
+function parseRetryAfter(res: Response): number | undefined {
+  const raw = res.headers.get('Retry-After')
+  if (raw === null || !/^\d+$/.test(raw.trim())) return undefined
+  return Number(raw)
+}
+
 /** Builds an ApiError from a failed response, tolerating non-JSON bodies (proxies, gateways). */
 export async function apiErrorFromResponse(res: Response): Promise<ApiError> {
   let body: unknown
@@ -112,5 +133,5 @@ export async function apiErrorFromResponse(res: Response): Promise<ApiError> {
   const error = isRecord(body) && isRecord(body.error) ? body.error : undefined
   const code = typeof error?.code === 'string' ? error.code : 'internal_error'
   const fields = Array.isArray(error?.fields) ? error.fields.filter(isFieldError) : []
-  return new ApiError(res.status, code, fields)
+  return new ApiError(res.status, code, fields, parseRetryAfter(res))
 }

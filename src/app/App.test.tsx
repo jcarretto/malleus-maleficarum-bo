@@ -3,12 +3,14 @@ import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useState } from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
-import { describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { App } from '@/app/App'
 import { ErrorFallback } from '@/components/ErrorFallback'
 import { copy } from '@/copy'
 import { createAppRouter } from '@/routes/router'
+import { refreshAccepted } from '@/test/adminAuth'
+import { server } from '@/test/msw/server'
 
 function renderAt(path: string) {
   const router = createAppRouter(createMemoryHistory({ initialEntries: [path] }))
@@ -16,6 +18,10 @@ function renderAt(path: string) {
 }
 
 describe('App shell', () => {
+  beforeEach(() => {
+    server.use(refreshAccepted())
+  })
+
   it('renders the layout with navigation and the home page', async () => {
     renderAt('/')
 

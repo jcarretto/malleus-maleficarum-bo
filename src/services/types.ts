@@ -20,7 +20,9 @@ export interface Session {
   user: User
 }
 
-export interface LoginInput {
+export interface AdminLoginInput {
   email: string
   password: string
+  /** Current 6-digit code from the authenticator app. */
+  totpCode: string
 }
