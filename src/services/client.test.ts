@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { copy } from '@/copy'
 import { getAccessToken, setAccessToken } from '@/services/accessToken'
-import { authApi } from '@/services/auth'
+import { adminAuthApi } from '@/services/auth'
 import { apiBaseUrl, apiRequest, onSessionChange, refreshLockName } from '@/services/client'
 import { ApiError, apiErrorCodes, fieldErrorMessage, validationRules } from '@/services/errors'
 import type { Session, User } from '@/services/types'
@@ -87,11 +87,11 @@ describe('apiRequest', () => {
 
   it('refreshes once on 401 and retries with the new token', async () => {
     const refresh = vi.fn<Resolver>(() => HttpResponse.json(session('tok-new')))
-    server.use(meAcceptsOnly('tok-new'), http.post(api('/v1/auth/refresh'), refresh))
+    server.use(meAcceptsOnly('tok-new'), http.post(api('/v1/admin/auth/refresh'), refresh))
     const { changes, unsubscribe } = recordSessionChanges()
     setAccessToken('tok-expired')
 
-    await expect(authApi.me()).resolves.toEqual(admin)
+    await expect(apiRequest<User>('/v1/me')).resolves.toEqual(admin)
 
     expect(refresh).toHaveBeenCalledTimes(1)
     expect(getAccessToken()).toBe('tok-new')
@@ -101,7 +101,7 @@ describe('apiRequest', () => {
 
   it('does not refresh a second time when the retry is still unauthorized', async () => {
     const refresh = vi.fn<Resolver>(() => HttpResponse.json(session('tok-new')))
-    server.use(meAcceptsOnly('never'), http.post(api('/v1/auth/refresh'), refresh))
+    server.use(meAcceptsOnly('never'), http.post(api('/v1/admin/auth/refresh'), refresh))
     setAccessToken('tok-expired')
 
     const err = await catchApiError(apiRequest('/v1/me'))
@@ -116,7 +116,7 @@ describe('apiRequest', () => {
       await new Promise((r) => setTimeout(r, 20))
       return HttpResponse.json(session('tok-new'))
     })
-    server.use(meAcceptsOnly('tok-new'), http.post(api('/v1/auth/refresh'), refresh))
+    server.use(meAcceptsOnly('tok-new'), http.post(api('/v1/admin/auth/refresh'), refresh))
     setAccessToken('tok-expired')
 
     await Promise.all([apiRequest('/v1/me'), apiRequest('/v1/me'), apiRequest('/v1/me')])
@@ -127,7 +127,7 @@ describe('apiRequest', () => {
   it('ends the session when the refresh token is rejected', async () => {
     server.use(
       meAcceptsOnly('never'),
-      http.post(api('/v1/auth/refresh'), () => apiError('invalid_refresh_token', 401)),
+      http.post(api('/v1/admin/auth/refresh'), () => apiError('invalid_refresh_token', 401)),
     )
     const { changes, unsubscribe } = recordSessionChanges()
     setAccessToken('tok-expired')
@@ -144,7 +144,7 @@ describe('apiRequest', () => {
   it('keeps the session when the refresh fails for network reasons', async () => {
     server.use(
       meAcceptsOnly('never'),
-      http.post(api('/v1/auth/refresh'), () => HttpResponse.error()),
+      http.post(api('/v1/admin/auth/refresh'), () => HttpResponse.error()),
     )
     const { changes, unsubscribe } = recordSessionChanges()
     setAccessToken('tok-old')
@@ -157,16 +157,37 @@ describe('apiRequest', () => {
     unsubscribe()
   })
 
+  it.each([
+    ['rate_limited', 429],
+    ['internal_error', 500],
+  ])('keeps the session when the refresh fails with %s', async (code, status) => {
+    server.use(
+      meAcceptsOnly('never'),
+      http.post(api('/v1/admin/auth/refresh'), () => apiError(code, status)),
+    )
+    const { changes, unsubscribe } = recordSessionChanges()
+    setAccessToken('tok-old')
+
+    const err = await catchApiError(apiRequest('/v1/me'))
+
+    expect(err.status).toBe(status)
+    expect(getAccessToken()).toBe('tok-old')
+    expect(changes).toEqual([])
+    unsubscribe()
+  })
+
   it('does not refresh for unauthenticated requests', async () => {
     const refresh = vi.fn<Resolver>(() => HttpResponse.json(session('x')))
     server.use(
-      http.post(api('/v1/auth/login'), () => apiError('invalid_credentials', 401)),
-      http.post(api('/v1/auth/refresh'), refresh),
+      http.post(api('/v1/admin/auth/login'), () => apiError('invalid_credentials', 401)),
+      http.post(api('/v1/admin/auth/refresh'), refresh),
     )
 
-    const err = await catchApiError(authApi.login({ email: 'a@b.co', password: 'wrong' }))
+    const err = await catchApiError(
+      adminAuthApi.login({ email: 'a@b.co', password: 'wrong', totpCode: '123456' }),
+    )
 
-    expect(err.userMessage).toBe('Email o contraseña incorrectos.')
+    expect(err.userMessage).toBe(copy.apiErrors.invalid_credentials)
     expect(refresh).not.toHaveBeenCalled()
     expect(getAccessToken()).toBeNull()
   })
@@ -175,7 +196,7 @@ describe('apiRequest', () => {
     const refresh = vi.fn<Resolver>(() => HttpResponse.json(session('x')))
     server.use(
       http.get(api('/v1/admin/thing'), () => apiError('forbidden', 403)),
-      http.post(api('/v1/auth/refresh'), refresh),
+      http.post(api('/v1/admin/auth/refresh'), refresh),
     )
     const { changes, unsubscribe } = recordSessionChanges()
     setAccessToken('tok-user')
@@ -205,10 +226,12 @@ describe('apiRequest', () => {
       (_name, fn) => fn(),
     )
     Object.defineProperty(navigator, 'locks', { configurable: true, value: { request } })
-    server.use(http.post(api('/v1/auth/refresh'), () => HttpResponse.json(session('tok-new'))))
+    server.use(
+      http.post(api('/v1/admin/auth/refresh'), () => HttpResponse.json(session('tok-new'))),
+    )
 
     try {
-      await expect(authApi.refresh()).resolves.toEqual(session('tok-new'))
+      await expect(adminAuthApi.refresh()).resolves.toEqual(session('tok-new'))
       expect(request).toHaveBeenCalledWith(refreshLockName, expect.any(Function))
     } finally {
       Reflect.deleteProperty(navigator, 'locks')
@@ -219,7 +242,7 @@ describe('apiRequest', () => {
 describe('error mapping', () => {
   it('parses validation errors with fields', async () => {
     server.use(
-      http.post(api('/v1/auth/login'), () =>
+      http.post(api('/v1/admin/auth/login'), () =>
         HttpResponse.json(
           {
             error: {
@@ -236,7 +259,9 @@ describe('error mapping', () => {
       ),
     )
 
-    const err = await catchApiError(authApi.login({ email: 'a', password: 'x' }))
+    const err = await catchApiError(
+      adminAuthApi.login({ email: 'a', password: 'x', totpCode: '123456' }),
+    )
 
     expect(err.status).toBe(422)
     expect(err.userMessage).toBe(copy.apiErrors.validation_failed)
@@ -274,6 +299,53 @@ describe('error mapping', () => {
     expect(html.userMessage).toBe(copy.apiErrors.internal_error)
   })
 
+  it('exposes Retry-After on a throttled response and says how long to wait', async () => {
+    server.use(
+      http.post(api('/v1/admin/auth/login'), () =>
+        HttpResponse.json(
+          { error: { code: 'rate_limited' } },
+          { status: 429, headers: { 'Retry-After': '30' } },
+        ),
+      ),
+    )
+
+    const err = await catchApiError(
+      adminAuthApi.login({ email: 'a@b.co', password: 'x', totpCode: '123456' }),
+    )
+
+    expect(err.status).toBe(429)
+    expect(err.retryAfterSeconds).toBe(30)
+    expect(err.userMessage).toBe(copy.rateLimit.retryIn(30))
+  })
+
+  it.each([null, 'soon', 'Wed, 21 Oct 2026 07:28:00 GMT'])(
+    'falls back to the generic throttling message when Retry-After is %s',
+    async (header) => {
+      server.use(
+        http.get(api('/v1/slow'), () =>
+          HttpResponse.json(
+            { error: { code: 'rate_limited' } },
+            { status: 429, headers: header === null ? {} : { 'Retry-After': header } },
+          ),
+        ),
+      )
+
+      const err = await catchApiError(apiRequest('/v1/slow', { auth: false }))
+
+      expect(err.retryAfterSeconds).toBeUndefined()
+      expect(err.userMessage).toBe(copy.apiErrors.rate_limited)
+    },
+  )
+
+  it.each([
+    [1, 'un segundo'],
+    [45, '45 segundos'],
+    [60, 'un minuto'],
+    [61, '2 minutos'],
+  ])('words a %s second wait', (seconds, text) => {
+    expect(copy.rateLimit.retryIn(seconds)).toContain(text)
+  })
+
   it.each(apiErrorCodes)('has a Spanish message for the %s code', (code) => {
     expect(copy.apiErrors[code]).toBeTruthy()
     expect(new ApiError(400, code).userMessage).toBe(copy.apiErrors[code])
@@ -286,25 +358,27 @@ describe('error mapping', () => {
   })
 })
 
-describe('authApi', () => {
+describe('adminAuthApi', () => {
   it('stores the access token after sign-in and drops it on logout even if the request fails', async () => {
     server.use(
-      http.post(api('/v1/auth/login'), () => HttpResponse.json(session('tok-login'))),
-      http.post(api('/v1/auth/logout'), () => HttpResponse.error()),
+      http.post(api('/v1/admin/auth/login'), () => HttpResponse.json(session('tok-login'))),
+      http.post(api('/v1/admin/auth/logout'), () => HttpResponse.error()),
     )
 
-    await authApi.login({ email: 'a@b.co', password: 'correct horse' })
+    await adminAuthApi.login({ email: 'a@b.co', password: 'correct horse', totpCode: '123456' })
     expect(getAccessToken()).toBe('tok-login')
 
-    await expect(authApi.logout()).rejects.toBeInstanceOf(ApiError)
+    await expect(adminAuthApi.logout()).rejects.toBeInstanceOf(ApiError)
     expect(getAccessToken()).toBeNull()
   })
 
   it('handles 204 responses', async () => {
-    server.use(http.post(api('/v1/auth/logout'), () => new HttpResponse(null, { status: 204 })))
+    server.use(
+      http.post(api('/v1/admin/auth/logout'), () => new HttpResponse(null, { status: 204 })),
+    )
     setAccessToken('tok-1')
 
-    await expect(authApi.logout()).resolves.toBeUndefined()
+    await expect(adminAuthApi.logout()).resolves.toBeUndefined()
     expect(getAccessToken()).toBeNull()
   })
 })

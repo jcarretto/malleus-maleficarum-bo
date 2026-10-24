@@ -72,7 +72,7 @@ async function parse<T>(res: Response): Promise<T> {
 let inFlightRefresh: Promise<Session> | null = null
 
 /**
- * Exchanges the refresh cookie for a new session. Concurrent callers in this tab
+ * Exchanges the admin refresh cookie for a new session. Concurrent callers in this tab
  * share one request, and tabs take turns through a Web Lock: the API revokes the
  * whole session if the same refresh token is presented twice, and while one tab
  * refreshes, the browser has not yet stored the rotated cookie for the others.
@@ -86,13 +86,15 @@ export function refreshSession(): Promise<Session> {
 
 async function doRefresh(): Promise<Session> {
   try {
-    const session = await parse<Session>(await send('/v1/auth/refresh', { method: 'POST' }, null))
+    const session = await parse<Session>(
+      await send('/v1/admin/auth/refresh', { method: 'POST' }, null),
+    )
     applySession(session)
     emit(session)
     return session
   } catch (err) {
-    // Only a definitive rejection ends the session; a network error might be temporary.
-    if (err instanceof ApiError && !err.isNetworkError) {
+    // Only a definitive rejection ends the session; a network error, a 429 or a 5xx might be temporary.
+    if (err instanceof ApiError && err.status === 401) {
       applySession(null)
       emit(null)
     }

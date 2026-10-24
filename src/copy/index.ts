@@ -37,13 +37,40 @@ export const copy = {
     unauthorized: 'Tu sesión venció. Ingresá de nuevo.',
     forbidden: 'No tenés permiso para hacer esto.',
     email_taken: 'Ya existe una cuenta con ese email.',
-    invalid_credentials: 'Email o contraseña incorrectos.',
+    invalid_credentials: 'Email, contraseña o código incorrectos.',
     invalid_refresh_token: 'Tu sesión venció. Ingresá de nuevo.',
     invalid_google_token: 'No pudimos verificar tu cuenta de Google. Probá de nuevo.',
     google_account_conflict: 'Esta cuenta ya está vinculada a otra cuenta de Google.',
     google_signin_unavailable: 'El ingreso con Google no está disponible por ahora.',
     invalid_reset_token: 'El enlace venció o ya se usó. Pedí uno nuevo.',
     not_ready: 'El servicio no está disponible por ahora. Intentá más tarde.',
+  },
+  rateLimit: {
+    /** Throttled by the API, which says how many seconds to wait. */
+    retryIn: (seconds: number) => {
+      if (seconds <= 1) return 'Demasiados intentos. Probá de nuevo en un segundo.'
+      if (seconds < 60) return `Demasiados intentos. Probá de nuevo en ${String(seconds)} segundos.`
+      const minutes = Math.ceil(seconds / 60)
+      return minutes === 1
+        ? 'Demasiados intentos. Probá de nuevo en un minuto.'
+        : `Demasiados intentos. Probá de nuevo en ${String(minutes)} minutos.`
+    },
+  },
+  auth: {
+    signInTitle: 'Ingresar al backoffice',
+    signInDescription: 'Usá tu cuenta de administrador y el código de tu app de autenticación.',
+    email: 'Email',
+    password: 'Contraseña',
+    totpCode: 'Código de verificación',
+    totpHint: '6 dígitos de tu app de autenticación.',
+    submit: 'Ingresar',
+    submitting: 'Ingresando…',
+    restoring: 'Verificando sesión…',
+    errors: {
+      emailRequired: 'Ingresá tu email.',
+      passwordRequired: 'Ingresá tu contraseña.',
+      totpInvalid: 'Ingresá el código de 6 dígitos.',
+    },
   },
   /** Messages for the per-field validation rules reported by the API. */
   validation: {
