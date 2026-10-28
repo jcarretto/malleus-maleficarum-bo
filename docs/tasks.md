@@ -45,3 +45,9 @@ Status: ✅ merged into `develop` · ⏸ on hold by owner decision · blank = pe
 | BO-31 | User list (read-only), searchable by email | BO-11, API-72 | Paginated table |  |
 | BO-32 | GitHub Actions: typecheck, lint, test, build | BO-04 | Green on `develop` | ✅ |
 | BO-33 | Revoke a user's Premium with a reason, with confirmation | BO-31, API-68 | The user shows as free afterwards; the reason is required |  |
+
+## Phase 4 — Pre-release access
+
+| ID | Task | Depends on | Done when | Status |
+|-|-|-|-|-|
+| BO-34 | "Acceso a la app" screen: list, add and remove the emails allowed to open the player app during pre-release (Cloudflare Access list via `/v1/admin/access-list`) | BO-11, API-102 | Add with duplicate and invalid email errors, remove with confirmation, empty / loading / error states and a clear "not configured" state; MSW tests |  |

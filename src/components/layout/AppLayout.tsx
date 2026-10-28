@@ -1,9 +1,12 @@
 import { Link, Outlet } from '@tanstack/react-router'
-import { House } from 'lucide-react'
+import { House, MailCheck } from 'lucide-react'
 
 import { copy } from '@/copy'
 
-const navItems = [{ to: '/', label: copy.nav.home, icon: House }] as const
+const navItems = [
+  { to: '/', label: copy.nav.home, icon: House },
+  { to: '/access-list', label: copy.nav.accessList, icon: MailCheck },
+] as const
 
 /** Desktop-first shell: fixed sidebar navigation and a scrollable content area. */
 export function AppLayout() {

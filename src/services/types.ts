@@ -26,3 +26,15 @@ export interface AdminLoginInput {
   /** Current 6-digit code from the authenticator app. */
   totpCode: string
 }
+
+/** An email allowed to open the player app during pre-release (Cloudflare Access list). */
+export interface AccessListEntry {
+  email: string
+  /** RFC 3339. */
+  createdAt: string
+}
+
+export interface AccessList {
+  /** Sorted by email. */
+  items: AccessListEntry[]
+}

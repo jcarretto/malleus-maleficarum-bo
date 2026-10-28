@@ -10,6 +10,7 @@ import {
 import { ErrorFallback } from '@/components/ErrorFallback'
 import { AppLayout } from '@/components/layout/AppLayout'
 import { NotFound } from '@/components/NotFound'
+import { AccessListPage } from '@/features/access-list/AccessListPage'
 import { LoginPage } from '@/features/auth/LoginPage'
 import { SessionPending } from '@/features/auth/SessionPending'
 import { HomePage } from '@/features/home/HomePage'
@@ -51,6 +52,12 @@ const homeRoute = createRoute({
   component: HomePage,
 })
 
+const accessListRoute = createRoute({
+  getParentRoute: () => authedRoute,
+  path: '/access-list',
+  component: AccessListPage,
+})
+
 // Unknown URLs: signed-out visitors are sent to sign-in, admins see not-found inside the layout.
 const notFoundRoute = createRoute({
   getParentRoute: () => authedRoute,
@@ -60,7 +67,7 @@ const notFoundRoute = createRoute({
 
 const routeTree = rootRoute.addChildren([
   loginRoute,
-  authedRoute.addChildren([homeRoute, notFoundRoute]),
+  authedRoute.addChildren([homeRoute, accessListRoute, notFoundRoute]),
 ])
 
 /** Creates the router. Tests pass a memory history. */
