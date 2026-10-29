@@ -24,6 +24,9 @@ export const apiErrorCodes = [
   'google_signin_unavailable',
   'invalid_reset_token',
   'not_ready',
+  'already_listed',
+  'access_list_not_configured',
+  'upstream_error',
 ] as const
 
 export type ApiErrorCode = (typeof apiErrorCodes)[number]

@@ -8,6 +8,7 @@ export const copy = {
   nav: {
     label: 'Navegación principal',
     home: 'Inicio',
+    accessList: 'Acceso a la app',
   },
   home: {
     title: 'Inicio',
@@ -44,6 +45,9 @@ export const copy = {
     google_signin_unavailable: 'El ingreso con Google no está disponible por ahora.',
     invalid_reset_token: 'El enlace venció o ya se usó. Pedí uno nuevo.',
     not_ready: 'El servicio no está disponible por ahora. Intentá más tarde.',
+    already_listed: 'Ese email ya está en la lista.',
+    access_list_not_configured: 'La lista de acceso no está configurada en el servidor.',
+    upstream_error: 'Un servicio externo no respondió. Intentá de nuevo en unos minutos.',
   },
   rateLimit: {
     /** Throttled by the API, which says how many seconds to wait. */
@@ -70,6 +74,38 @@ export const copy = {
       emailRequired: 'Ingresá tu email.',
       passwordRequired: 'Ingresá tu contraseña.',
       totpInvalid: 'Ingresá el código de 6 dígitos.',
+    },
+  },
+  accessList: {
+    title: 'Acceso a la app',
+    description: 'Durante el prelanzamiento, solo estos emails pueden abrir la app.',
+    loading: 'Cargando la lista…',
+    empty: 'Todavía no hay emails en la lista.',
+    tableCaption: 'Emails con acceso a la app',
+    columnEmail: 'Email',
+    columnAddedAt: 'Agregado',
+    columnActions: 'Acciones',
+    addTitle: 'Agregar un email',
+    email: 'Email',
+    emailPlaceholder: 'nombre@ejemplo.com',
+    add: 'Agregar',
+    adding: 'Agregando…',
+    added: (email: string) => `Se agregó ${email}.`,
+    remove: 'Quitar',
+    removeLabel: (email: string) => `Quitar ${email}`,
+    removing: 'Quitando…',
+    removed: (email: string) => `Se quitó ${email}.`,
+    alreadyRemoved: (email: string) => `${email} ya no estaba en la lista.`,
+    confirmTitle: (email: string) => `¿Quitar ${email}?`,
+    confirmBody: 'No va a poder abrir la app hasta que lo agregues de nuevo.',
+    cancel: 'Cancelar',
+    loadErrorTitle: 'No pudimos cargar la lista',
+    notConfiguredTitle: 'La lista de acceso no está configurada',
+    notConfiguredBody:
+      'El servidor no tiene los datos de Cloudflare para administrar la lista. Pedile a quien administra el servidor que los configure.',
+    errors: {
+      emailRequired: 'Ingresá un email.',
+      emailInvalid: 'Ingresá un email válido.',
     },
   },
   /** Messages for the per-field validation rules reported by the API. */
