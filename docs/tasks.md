@@ -26,7 +26,7 @@ Status: ✅ merged into `develop` · ⏸ on hold by owner decision · blank = pe
 | ID | Task | Depends on | Done when | Status |
 |-|-|-|-|-|
 | BO-10 | HTTP client: `credentials: 'include'`, access token in memory, single refresh retry on 401, API error codes → Spanish messages | BO-05 | MSW tests | ✅ |
-| BO-11 | Sign-in with email + password + TOTP code against `/v1/admin/auth/*` (no Google), session restore, guarded routes | BO-10, API-47, API-48 | Wrong credentials, wrong code and non-admin accounts show the same error; reload keeps the session |  |
+| BO-11 | Sign-in with email + password + TOTP code against `/v1/admin/auth/*` (no Google), session restore, guarded routes | BO-10, API-47, API-48 | Wrong credentials, wrong code and non-admin accounts show the same error; reload keeps the session | ✅ |
 | BO-12 | Sign-out (`/v1/admin/auth/logout`) | BO-11 | Admin cookie cleared; refresh revoked; the player app session is unaffected |  |
 
 ## Phase 2 — Activation codes
@@ -50,4 +50,4 @@ Status: ✅ merged into `develop` · ⏸ on hold by owner decision · blank = pe
 
 | ID | Task | Depends on | Done when | Status |
 |-|-|-|-|-|
-| BO-34 | "Acceso a la app" screen: list, add and remove the emails allowed to open the player app during pre-release (Cloudflare Access list via `/v1/admin/access-list`) | BO-11, API-102 | Add with duplicate and invalid email errors, remove with confirmation, empty / loading / error states and a clear "not configured" state; MSW tests |  |
+| BO-34 | "Acceso a la app" screen: list, add and remove the emails allowed to open the player app during pre-release (Cloudflare Access list via `/v1/admin/access-list`) | BO-11, API-102 | Add with duplicate and invalid email errors, remove with confirmation, empty / loading / error states and a clear "not configured" state; MSW tests | ✅ |
