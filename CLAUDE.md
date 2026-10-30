@@ -15,7 +15,7 @@ Spec and decisions: `docs/architecture.md`. Work plan: `docs/tasks.md`.
 
 ```bash
 pnpm install
-pnpm dev                       # Vite dev server on http://localhost:5174
+pnpm dev                       # Vite dev server on http://localhost:5175
 pnpm build                     # tsc -b && vite build
 pnpm typecheck                 # tsc -b --noEmit (required before closing a task)
 pnpm test                      # Vitest + React Testing Library + MSW (test:watch, test:coverage)
