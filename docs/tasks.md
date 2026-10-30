@@ -20,7 +20,7 @@ Status: ✅ merged into `develop` · ⏸ on hold by owner decision · blank = pe
 | BO-09 | Docs: status column in `docs/tasks.md` | — | Every task shows whether it is done | ✅ |
 | BO-13 | Docs: fraud and tampering decisions; tasks BO-22, BO-33 | — | Decision log and tasks updated | ✅ |
 | BO-14 | Docs: BO-21 and BO-31 depend on the new admin list endpoints | — | Tasks updated | ✅ |
-| BO-35 | Dev server on port 5175 (owner decision of 2026-10-31): port 5174 now serves the installable player PWA build (`scripts/dev.ps1` in the PWA repo), because the Google OAuth client only allows `localhost:5173` and `localhost:5174` and the back office does not use Google sign-in | — | `pnpm dev` and `pnpm preview` listen on 5175; the API's `CORS_ALLOWED_ORIGINS` example lists it (API-105) | |
+| BO-35 | Dev server on port 5175 (owner decision of 2026-10-31): port 5174 now serves the installable player PWA build (`scripts/dev.ps1` in the PWA repo), because the Google OAuth client only allows `localhost:5173` and `localhost:5174` and the back office does not use Google sign-in | — | `pnpm dev` and `pnpm preview` listen on 5175; the API's `CORS_ALLOWED_ORIGINS` example lists it (API-105) | ✅ |
 
 ## Phase 1 — Admin access
 
